@@ -77,3 +77,25 @@ p1 <- ggplot(final_df, aes(x = Politics, y = Firearm_Ownership)) +
        y = "% Household Firearm Ownership") +
   theme_minimal()
 grid.arrange(p1, ncol = 2)
+
+
+# Define the donor pool states
+donor_pool_states <- c(
+  "Alabama", "Arkansas", "Florida", "Georgia", "Hawaii", "Idaho", "Indiana",
+  "Iowa", "Kansas", "Kentucky", "Louisiana", "Mississippi", "Nebraska", 
+  "New Hampshire", "North Carolina", "North Dakota", "Oklahoma", "Pennsylvania", 
+  "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", 
+  "West Virginia", "Wisconsin", "Wyoming"
+)
+
+#create the comparison table for donor pool and Arizona
+comparison_table <- data %>%
+  filter(State %in% c(donor_pool_states, "Arizona")) %>%
+  mutate(Group = ifelse(State == "Arizona", "Arizona (Treated)", "Donor Pool (Average)")) %>%
+  group_by(Group) %>%
+  summarise(across(c(AADR, Politics, Alcohol_PC, PR, Edu), 
+                   mean, na.rm = TRUE)) %>%
+  mutate(across(where(is.numeric), ~round(.x, 2)))
+
+#  Print the results
+print(comparison_table)
