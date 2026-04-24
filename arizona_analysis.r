@@ -144,6 +144,21 @@ abline(h = 0, lty = "dotted")
 par(mfrow = c(1, 1))
 #placebo plot, which plots gaps for Arizona (red), and all placebo states (gray), to show in-space placebo gaps, and the changes in the gaps oveer time
 all_gaps_df <- do.call(rbind, gaps_list)
+# Mean post-treatment effect for each state
+placebo_effects <- all_gaps_df %>%
+  filter(Year > 2020) %>%
+  group_by(State) %>%
+  summarise(mean_gap = mean(Gap))
+
+# Standard deviation across all states (including Arizona)
+sd_placebo <- sd(placebo_effects$mean_gap)
+
+# Arizona's mean effect (already computed as mean_effect)
+cohen_d_placebo <- mean_effect / sd_placebo
+
+cat("\n--- PLACEBO-BASED EFFECT SIZE ---\n")
+cat("SD of placebo effects:", round(sd_placebo, 3), "\n")
+cat("Standardized effect (relative to placebo):", round(cohen_d_placebo, 3), "\n")
 ggplot(all_gaps_df, aes(x = Year, y = Gap, group = State, color = Type, size = Type, alpha = Type)) +
   geom_line() +
   geom_vline(xintercept = 2020, linetype = "dashed", color = "red") +
