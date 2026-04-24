@@ -103,6 +103,26 @@ full_results <- data.frame( #creates a table with actual outcome, synthetic outc
 cat("\n--- ARIZONA YEAR-BY-YEAR ANALYSIS (With Differences) ---\n")
 print(full_results, row.names = FALSE)
 
+# Extract Arizona gaps
+az_gaps <- gaps_list[["Arizona"]]
+
+# Pre-treatment gaps (baseline variation)
+pre_gaps <- az_gaps$Gap[az_gaps$Year <= 2020]
+
+# Post-treatment gaps (treatment effect)
+post_gaps <- az_gaps$Gap[az_gaps$Year > 2020]
+
+# Compute mean effect and SD
+mean_effect <- mean(post_gaps)
+sd_pre <- sd(pre_gaps)
+
+# Cohen's d
+cohen_d <- mean_effect / sd_pre
+
+cat("\n--- PRACTICAL SIGNIFICANCE (COHEN'S D) ---\n")
+cat("Mean post-treatment effect:", round(mean_effect, 3), "\n")
+cat("Pre-treatment SD:", round(sd_pre, 3), "\n")
+cat("Cohen's d:", round(cohen_d, 3), "\n")
 #it extracts weights assigned to donor states for Arizona
 synth.tables.az <- synth.tab(dataprep.res = dataprep.az, synth.res = synth.az)
 weights_table <- data.frame( #lists which states contribute to synthetic Arizona
